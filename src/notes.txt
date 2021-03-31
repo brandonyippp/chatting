@@ -1,0 +1,23 @@
+      <ScrollContainer className="scroll-container">
+        <DragScrollArea>
+          <TopicList topicList={topics}></TopicList>
+        </DragScrollArea>
+      </ScrollContainer>
+
+      //alternate one
+
+    <DragScrollArea>
+        <ScrollContainer className="scroll-container">
+          <TopicList topicList={topics}></TopicList>
+        </ScrollContainer>
+    </DragScrollArea>
+
+
+
+          <input ref={topicNameRef} type="text" placeholder="What do you want to talk about?"></input>
+      <br></br>
+
+      <div>
+        <button onClick={addTopic}>Add Topic</button>
+        <h1>You have {topics.length} topics created!</h1>
+      </div>
