@@ -1,23 +1,13 @@
-      <ScrollContainer className="scroll-container">
-        <DragScrollArea>
-          <TopicList topicList={topics}></TopicList>
-        </DragScrollArea>
-      </ScrollContainer>
+        <TopicButton Topic={topic}>
+            ID: {topic.topicID}
+            <br />
+            Name: {topic.topicName}
+            <br />
+            (x, y): ({topic.x}, {topic.y})
+        </TopicButton>
 
-      //alternate one
-
-    <DragScrollArea>
-        <ScrollContainer className="scroll-container">
-          <TopicList topicList={topics}></TopicList>
-        </ScrollContainer>
-    </DragScrollArea>
-
-
-
-          <input ref={topicNameRef} type="text" placeholder="What do you want to talk about?"></input>
-      <br></br>
-
-      <div>
-        <button onClick={addTopic}>Add Topic</button>
-        <h1>You have {topics.length} topics created!</h1>
-      </div>
+<path fill="currentColor" d="M12,3L20,9V21H15V14H9V21H4V9L12,3Z" /> (home-variant)
+<path fill="currentColor" d="M9,13H15V19H18V10L12,5.5L6,10V19H9V13M4,21V9L12,3L20,9V21H4Z" /> (home-variant-outline)
+<path fill="currentColor" d="M12,2A2,2 0 0,1 14,4A2,2 0 0,1 12,6A2,2 0 0,1 10,4A2,2 0 0,1 12,2M10.5,7H13.5A2,2 0 0,1 15.5,9V14.5H14V22H10V14.5H8.5V9A2,2 0 0,1 10.5,7Z" /> (human-male)
+<path fill="currentColor" d="M12,2A2,2 0 0,1 14,4A2,2 0 0,1 12,6A2,2 0 0,1 10,4A2,2 0 0,1 12,2M10.5,22V16H7.5L10.09,8.41C10.34,7.59 11.1,7 12,7C12.9,7 13.66,7.59 13.91,8.41L16.5,16H13.5V22H10.5Z" /> (human-female)
+<path fill="currentColor" d="M1.5,4V5.5C1.5,9.65 3.71,13.28 7,15.3V20H22V18C22,15.34 16.67,14 14,14C14,14 13.83,14 13.75,14C9,14 5,10 5,5.5V4M14,4A4,4 0 0,0 10,8A4,4 0 0,0 14,12A4,4 0 0,0 18,8A4,4 0 0,0 14,4Z" /> (human-neutral)
