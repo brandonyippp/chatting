@@ -1,9 +1,9 @@
 import React from 'react';
 import Topic from './Topic.js';
 
-export default function TopicList({ topicList }) {
+export default function AllTopics({ allTopics }) {
     return (
-        topicList.map(currentTopic => 
+        allTopics.map(currentTopic => 
             <Topic key={currentTopic.topicID} topic={currentTopic}/>)
     )
 }

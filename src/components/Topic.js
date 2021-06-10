@@ -2,7 +2,10 @@ import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import styled from 'styled-components';
+import Popup from 'reactjs-popup';
+import FadeIn from 'react-fade-in';
 
+/* Different Icons */
 const IconHumanMale = (props) => {
     return (
       <SvgIcon {...props}>
@@ -26,8 +29,6 @@ const IconHumanWave = (props) => {
         </SvgIcon>
     )
 }
-
-/* STILL HAVE TO FIGURE OUT HOW TO FADE-IN BUTTON HOVER */
 const TopicIcon = styled(IconHumanWave)`
     margin: 0px;
     opacity: 0.9;
@@ -38,36 +39,119 @@ const TopicIcon = styled(IconHumanWave)`
         color: black;
     }
 `;
+
+/* Main container that holds the icon, doesn't do much else */
 const TopicContainer = styled.div`
-    border: 3px solid black;
-    border-radius: 100px;
     left: ${props => props.topic.x ? props.topic.x : 100}vw;
     top: ${props => props.topic.y ? props.topic.y : 100}vh;
-    min-height: 60px;
-    max-height: 110px;
-    min-width: 60px;
-    max-width: 110px;
-    padding: 10px;
     position: absolute;
-    text-align: center;
-    font: 15px Garamond, "Times New Roman", Arial, serif;
-    font-weight: 1000;
-    overflow: hidden;
     color: #9932CC;
-    cursor: pointer;
-    &:active {
+    z-axis: 99;
+    &:active ${TopicIcon} {
         color: black;
     }
 `;
 
+/* Container that holds everything that pops up when topic is pressed */
+const ModalContainer = styled.div`
+    font-size: 15px;
+    color: #ffffff;
+    border-radius: 8px;
+    background: black;
+    overflow: visible;
+    text-align: center;
+    justify-content: center;
+    padding: 8px;
+`;
+
+/* Styling for things that appear in popup window on topic press */
+const ModalCloseButton = styled.button`
+    cursor: pointer;
+    position: absolute;
+    display: block;
+    padding: 2px 5px;
+    line-height: 20px;
+    right: -10px;
+    top: -10px;
+    font-size: 24px;
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid #cfcece;
+`;
+const ModalHeader = styled.div`
+    width: 100%;
+    border-bottom: 1px solid gray;
+    font-size: 18px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+`;
+const ModalContent = styled.div`
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+`;
+const ModalActions = styled.div`
+    width: 100%;
+    padding: 5px 0;
+    margin: auto;
+    text-align: center;
+    border-top: 1px solid grey;
+`;
+const ModalActionButton = styled.button`
+    color: #fff !important;
+    text-transform: uppercase;
+    margin: 0 1px;
+    text-decoration: none;
+    background: #ed3330;
+    padding: 20px;
+    border-radius: 5px;
+    border: none;
+    transition: all 0.4s ease 0s;
+
+    &:hover {
+        background: #434343;
+        letter-spacing: 1px;
+        -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+        -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+        box-shadow: 5px 40px -10px rgba(0,0,0,0.57);
+        transition: all 0.4s ease 0s;
+    }
+`;
+
+
 export default function Topic({ topic }) {
     return (
-        <>
         <TopicContainer topic={topic}>
-            <TopicIcon style={{ fontSize: 40 }} topic={topic}></TopicIcon>
-            <br />
-            {topic.topicNameShortened}
+            <Popup trigger={<TopicIcon style={{ fontSize: 40 }}></TopicIcon>}
+            modal 
+            nested
+            >
+                {close => (
+                    <FadeIn>
+                        <ModalContainer>
+
+                            <ModalCloseButton onClick={close}>
+                                &times;
+                            </ModalCloseButton>
+
+                            <ModalHeader>CHAT TOPIC</ModalHeader>
+
+                            <ModalContent>
+                                {' '}
+                                {topic.topicName}
+                            </ModalContent>
+
+                            <ModalActions>
+                                <ModalActionButton>talk</ModalActionButton>
+                                <ModalActionButton>close</ModalActionButton>
+                            </ModalActions>
+
+                        </ModalContainer>
+                    </FadeIn>
+                )}
+            </Popup>
         </TopicContainer>
-        </>
     )
 }

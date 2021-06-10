@@ -3,7 +3,7 @@ import container from 'react-indiana-drag-scroll';
 import styled, { createGlobalStyle, keyframes } from 'styled-components';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import {v4 as uuidv4} from 'uuid';
-import TopicList from './components/TopicList';
+import AllTopics from './components/AllTopics.js';
 import './css/styles.css';
 
 /* 
@@ -14,10 +14,21 @@ Known bugs:
       the behavior change
 */
 
-const MAX_TOPICNAME_LENGTH = 8;
+/* Global Variables */
+const MAX_TOPICNAME_LENGTH = 50;
+const MIN_TOPICNAME_LENGTH = 2;
 let initialDragScrollArea = {x: "199.6vw", y:"199.6vh"};
 let initialLoad = true;
 
+/* Remove space on left-most edge of screen */
+const RemoveLeftSpacing = createGlobalStyle`
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+`;
+
+/* Home button styling */
 const IconHome = (props) => {
   return (
       <SvgIcon {...props}>
@@ -25,32 +36,6 @@ const IconHome = (props) => {
       </SvgIcon>
   )
 }
-const GlobalStyle = createGlobalStyle`
-  html, body {
-    margin: 0;
-    padding: 0;
-  }
-`;
-const ParentContainer = styled.div`
-  position: relative;
-  display: flex;
-  height: 100vh;
-  justify-content: center;
-  align-items: end;
-`;
-const ScrollContainer = styled(container)`
-  border: 2px solid #708090;
-  min-width: 0%;
-  max-width: 99.8%;
-  min-height: 10vh;
-  max-height: 90vh;
-  position: relative;
-`;
-const DragScrollArea = styled.div`
-  display: flex;
-  min-width: ${initialDragScrollArea.x};
-  min-height: ${initialDragScrollArea.y};
-`;
 const HomeButton = styled(IconHome)`
   display: flex;
   border: 2.5px solid black;
@@ -62,41 +47,86 @@ const HomeButton = styled(IconHome)`
   height: 50px;
   width: 50px;
   margin: auto;
-  z-index: 99;
+  z-index: 2;
   opacity: 1;
 `;
+
+/* Everything contained within here */
+const ParentContainer = styled.div`
+  display: flex;
+  position: absolute;
+  border: 1px solid red;
+  width: 100%;
+  height: 100%;
+`;
+
+/* Draggable scroll container; Contains area that we want to scroll over */
+const DragScrollContainer = styled(container)`
+  position: relative;
+  border: 5px solid black;
+  width: 87%;
+  height: 90%;
+`;
+
+/* Area contained within ScrollContainer with specified (x, y) size */
+const DragScrollArea = styled.div`
+  display: flex;
+  min-width: ${initialDragScrollArea.x};
+  min-height: ${initialDragScrollArea.y};
+`;
+
 
 function App() {
   const [topics, setTopics] = useState([]);
   const TopicNameRef = useRef();
 
+  /* Not sure if needed */
+  const randomNumber = (min, max) => {
+    return Math.random() * (max - min) + min;
+  }
+
+  /* Helper functions for addTopic() */
   const topicCoordinate = (value) => {
     return Math.floor(Math.random() * (value + 1));
   }
+  const isValidTopic = topicName => {
+    if (topicName.length <= MIN_TOPICNAME_LENGTH || 
+      topicName.length >= MAX_TOPICNAME_LENGTH ||
+      topicName.trim() === "") {
+        return false;
+      }
+    return true;
+  }
 
-  //maybe think of some cool logic here later
-  const topicNameSubString = (topicName) => {
-    let finalString = topicName;
-    if (topicName.length > MAX_TOPICNAME_LENGTH) {
-      finalString = topicName.substr(0, MAX_TOPICNAME_LENGTH) + '\n...';
-    }
-    return finalString;
-}
   const addTopic = () => {
     const topicName = TopicNameRef.current.value;
-    if (topicName.trim() === '') {
-      alert('Please enter a valid conversation topic!');
-    } else {
-      const topicNameShortened = topicNameSubString(topicName);
-      const x = topicCoordinate(parseInt(initialDragScrollArea.x));
-      const y = topicCoordinate(parseInt(initialDragScrollArea.y));
 
-      setTopics(allTopics => [...allTopics, {topicName: topicName, 
-        topicNameShortened: topicNameShortened, topicID: uuidv4(), x: x, y: y}]
-      );
+    if (!isValidTopic(topicName)) {
+      alert("Please enter a valid topic.");
+      return;
     }
+
+    const x = topicCoordinate(parseInt(initialDragScrollArea.x));
+    const y = topicCoordinate(parseInt(initialDragScrollArea.y));
+
+    setTopics(allTopics => [...allTopics, {topicName: topicName, 
+      topicID: uuidv4(), x: x, y: y}]
+    );
+
     TopicNameRef.current.value = null;
   }
+
+  const removeRandomTopic = () => {
+    if (topics.length === 0) {
+      alert("No topics currently exist.");
+      return;
+    }
+
+    const elementToDelete = topics[Math.floor(Math.random() * topics.length)];
+    const tempTopics = topics.filter((currentTopic => currentTopic.topicID !== elementToDelete.topicID));
+    setTopics(tempTopics);
+  }
+
   const returnHome = () => {
     if (initialLoad) {
       document.getElementById("homeButtonRef").scrollIntoView(
@@ -114,22 +144,25 @@ function App() {
 
   return (
     <>
-      <GlobalStyle />
-      {/*
-      <input ref={TopicNameRef} type="text" placeholder="Chat topic?"></input>
+      <RemoveLeftSpacing />
+
+      <input ref={TopicNameRef} type="text" placeholder="Chat topic?" />
       <div>
         <button onClick={addTopic}>Add Topic</button>
+        <button onClick={removeRandomTopic}>Delete Random Topic</button>
         <h1>{topics.length} topics have been created.</h1>
       </div>
-      */}
+
       <ParentContainer>
-        <ScrollContainer className="scroll-container">
+        <DragScrollContainer>
           <DragScrollArea>
-            <TopicList topicList={topics}></TopicList>
-            <HomeButton id="homeButtonRef" style={{ fontSize: 60 }} onClick={returnHome}>center</HomeButton>
+
+            <AllTopics allTopics={topics} />
+            <HomeButton id="homeButtonRef" style={{ fontSize: 60 }} onClick={returnHome} />
+
           </DragScrollArea>
-        </ScrollContainer>
-        <button style={{color: "red"}}>hisssss</button>
+        </DragScrollContainer>
+        <div>yo</div>
       </ParentContainer>
     </>
   );
